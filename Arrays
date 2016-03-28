@@ -1,0 +1,94 @@
+Top: Array
+
+1. 各种sum
+1a. Sum 注意要求indices，所以不能sort
+var twoSum = function(nums, target) {
+    var n = nums.length;
+    if(n < 1){
+        return [];
+    }
+    var ref = new Map();
+    for(var i = 0; i < n; i++){
+        if(ref.has(target-nums[i])){
+            return [ref.get(target-nums[i]), i];
+        }
+        else{
+            ref.set(nums[i], i);
+        }
+    }
+    return [];
+};
+
+1b. 3 Sum
+要求是 triplets，不用indices，所以元素要sort
+为了避免重复，跳过之前已经选出的triplets
+var threeSum = function(nums) {
+    var n = nums.length;
+    if(n < 3){
+        return [];
+    }
+    var res  = [];
+    nums.sort(function(a,b){
+        return a-b;
+    });
+    for(var i = 0; i < n-2; i++){
+        if(i > 0 && nums[i] === nums[i-1]){
+            continue;
+        }
+        var p = i+1;
+        var q = n-1;
+        var target = 0 - nums[i];
+        while(p < q){
+            if(p > i+1 && nums[p] === nums[p-1]){
+                p++;
+                continue;
+            }
+            if(nums[p] + nums[q] < target){
+                p++;
+            }
+            else if(nums[p] + nums[q] > target){
+                q--;
+            }
+            else{
+                res.push([nums[i], nums[p], nums[q]]);
+                p++;
+                q--;
+            }
+        }
+    }
+    return res;
+};
+
+1c. 3 Sum Closest
+加入一个dif表示delta
+
+1d. 3 Sum Smaller
+注意只要求出个数，不用每一个element
+var threeSumSmaller = function(nums, target) {
+    var n = nums.length;
+    if(n < 3){
+        return 0;
+    }
+    nums.sort(function(a,b){
+        return a-b;
+    });
+    var res = 0;
+    for(var i = 0; i < n-2; i++){
+        var p = i+1;
+        var q = n-1;
+        var tofind = target-nums[i];
+        while(p < q){
+            if(nums[p] + nums[q] >= tofind){
+                q--;
+            }
+            else{
+                res += q-p;
+                p++;
+            }
+        }
+    }
+    return res;
+};
+
+1e. 4 Sum
+基于3 Sum，多一层的复杂度
