@@ -32,3 +32,97 @@ var KMP = function(p){
     return ref;
 };
 
+2. word pattern
+2a. 用两个hash map表示一一映射
+var isIsomorphic = function(s, t) {
+    if(s.length !== t.length){
+        return false;
+    }
+    var ref = new Map();
+    var ref2 = new Map();
+    for(var i = 0; i < t.length; i++){
+        if(ref.has(s[i]) !== ref2.has(t[i])){
+            return false;
+        }
+        else if(ref.has(s[i])){
+            if((ref.get(s[i]) !== t[i]) || (ref2.get(t[i]) !== s[i])){
+                return false;
+            }
+        }
+        else{
+            ref.set(s[i], t[i]);
+            ref2.set(t[i], s[i]);
+        }
+    }
+    return true;
+};
+2b. 
+pattern = "abab", str = "redblueredblue" should return true.
+需要找到strs每个单词的切割，用backtracking，记录当前的pattern[cur]
+var wordPatternMatch = function(pattern, str) {
+    var ref = new Map();
+    var ref2 = new Map();
+    return dfs(pattern, str, 0, ref, ref2);
+};
+
+var dfs = function(pattern, str, pos, ref, ref2){
+    if(str.length < 1){
+        return (pos === pattern.length);
+    }
+    for(var i = 1; i <= str.length; i++){
+        var word = str.substring(0, i);
+        if(ref.has(pattern[pos]) !== ref2.has(word)){
+            continue;
+        }
+        else if(ref.has(pattern[pos])){
+            if((ref.get(pattern[pos]) !== word) || (ref2.get(word) !== pattern[pos])){
+                continue;
+            }
+            else{
+                if(dfs(pattern, str.substring(i), pos+1, ref, ref2)){
+                    return true;
+                }
+            }
+        }
+        else{
+            ref.set(pattern[pos], word);
+            ref2.set(word, pattern[pos]);
+            if(dfs(pattern, str.substring(i), pos+1, ref, ref2)){
+                return true;
+            }
+            else{
+                ref.delete(pattern[pos]);
+                ref2.delete(word);
+            }
+        }
+    }
+    return false;
+};
+
+3. word break。一个str能否用dictionary里面的word表示出一个句子
+3a.return boolean。dp, ref[i] 表示0-i能否表示
+var wordBreak = function(s, wordDict) {
+    if(s.length < 1 || wordDict.size < 1){
+        return false;
+    }
+    var i, j;
+    var n = s.length;
+    var ref = [1+n];
+    ref[0] = true;
+    for(i = 1; i <= n; i++){
+        ref[i] = false;
+    }
+    for(i = 0; i < n; i++){
+        if(ref[i] === false){
+            continue;
+        }
+        for(j = i; j < n; j++){
+            if(wordDict.has(s.substring(i, j+1))){
+                ref[j+1] = true;
+            }
+        }
+    }
+    return ref[n];
+};
+
+
