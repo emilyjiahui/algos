@@ -125,5 +125,5 @@ var wordBreak = function(s, wordDict) {
     return ref[n];
 };
 
-3b. 
+3b. 需要求出所有的word break的解，用backtracking，但是注意剪枝。用一个数组表示是否可能有解，如果没有，剪枝。
 
