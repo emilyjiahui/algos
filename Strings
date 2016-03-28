@@ -125,4 +125,5 @@ var wordBreak = function(s, wordDict) {
     return ref[n];
 };
 
+3b. 
 
