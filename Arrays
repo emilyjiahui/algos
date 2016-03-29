@@ -92,3 +92,31 @@ var threeSumSmaller = function(nums, target) {
 
 1e. 4 Sum
 基于3 Sum，多一层的复杂度
+
+2. Remove elements
+两种方法：一种是begin表示实际有效idx，只有在！==val的时候begin++；一种是用2pointers，复杂但是更加通用
+var removeElement = function(nums, val) {
+    if(nums.length < 1){
+        return nums.length;
+    }
+    var p = 0;
+    var q = nums.length - 1;
+    while(q >= 0 && nums[q] === val){
+        q--;
+    }
+    while(p < q){
+        if(nums[p] === val){
+            nums[p] = nums[q];
+            nums[q] = val;
+            p++;
+            q--;
+            while(p < q && nums[q] === val){
+                q--;
+            }
+        }
+        else{
+            p++;
+        }
+    }
+    return (nums[p]===val)? p : (p+1);
+};
