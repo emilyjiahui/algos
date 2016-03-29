@@ -126,4 +126,77 @@ var wordBreak = function(s, wordDict) {
 };
 
 3b. 需要求出所有的word break的解，用backtracking，但是注意剪枝。用一个数组表示是否可能有解，如果没有，剪枝。
+var wordBreak = function(s, wordDict) {
+    if(s.length < 1 || wordDict.size < 1){
+        return [];
+    }
+    var res = [];
+    var n = s.length;
+    var possi = [n];
+    for(var i = 0; i < n; i++){
+        possi[i] = true;
+    }
+    dfs(s, wordDict, res, "", 0, possi);
+    return res;
+};
 
+var dfs = function(s, wordDict, res, one, pos, possi){
+    if(pos === s.length){
+        res.push(one.trim());
+        return;
+    }
+    var n = res.length;
+    var onel = one.length;
+    for(var i = pos; i < s.length; i++){
+        var word = s.substring(pos, i+1);
+        if(wordDict.has(word) && (i === s.length-1 || possi[i+1])){
+            one += " " + word;
+            dfs(s, wordDict, res, one, i+1, possi);
+            if(res.length === n){
+                if(i < s.length-1){
+                    possi[i+1] = false;
+                }
+            }
+            one = one.substring(0, onel);
+        }
+    }
+    return;
+};
+
+4. Word ladder
+4a. 求变换长度，bfs。注意剪枝
+var ladderLength = function(beginWord, endWord, wordList) {
+    if(beginWord === endWord){
+        return 1;
+    }
+    var res = 0;
+    var q = [];
+    var n = beginWord.length;
+    q.push(beginWord);
+    wordList.delete(beginWord);
+    while(q.length > 0){
+        var len = q.length;
+        res++;
+        for(var i = 0; i < len; i++){
+            var cur = q.shift();
+            for(var j = 0; j < n; j++){
+                for(var k = 0; k < 26; k++){
+                    if(cur.charCodeAt(j) === String.fromCharCode(k+97)){
+                        continue;
+                    }
+                    var onedif = cur.substring(0, j) + String.fromCharCode(k+97) + cur.substring(j+1);
+                    if(onedif === endWord){
+                        return res+1;
+                    }
+                    else if(wordList.has(onedif)){
+                        q.push(onedif);
+                        wordList.delete(onedif);
+                    }
+                }
+            }
+        }
+    }
+    return 0;
+};
+
+4b.
