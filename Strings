@@ -199,4 +199,84 @@ var ladderLength = function(beginWord, endWord, wordList) {
     return 0;
 };
 
-4b.
+4b.求出所有的解。注意需要记录step，用bfs求出最短路径，只有在同一level时push word到q。然后用dfs求出所有的解。
+var findLadders = function(beginWord, endWord, wordList) {
+    if(beginWord === endWord){
+        return [[beginWord]];
+    }
+    var q = [];
+    q.push(beginWord);
+    var found = false;
+    var ref = new Map();
+    var ladder = new Map();
+    var step = 0;
+    var res = [];
+    ladder.set(beginWord, step);
+    while(q.length > 0){
+        var len = q.length;
+        step++;
+        for(var i = 0; i < len; i++){
+            var cur = q.shift();
+            wordList.delete(cur);
+            for(var j = 0; j < cur.length; j++){
+                for(var k = 0; k < 26; k++){
+                    if(cur.charCodeAt(j) === (97+k)){
+                        continue;
+                    }
+                    var onedif = cur.substring(0, j) + String.fromCharCode(k+97) + cur.substring(j+1);
+                    if(onedif === endWord){
+                        if(found === false){
+                            ref.set(onedif, [cur]);
+                            found = true;
+                        }
+                        else{
+                            var arr = ref.get(onedif);
+                            arr.push(cur);
+                            ref.set(onedif, arr);
+                        }
+
+                    }
+                    else if((found === false) && (wordList.has(onedif))){
+                        if(ladder.has(onedif)){
+                            if(ladder.get(onedif) === step){
+                                var arr1 = ref.get(onedif);
+                                arr1.push(cur);
+                                ref.set(onedif, arr1);
+                            }
+                        }
+                        else{
+                            ref.set(onedif, [cur]);
+                            ladder.set(onedif, step);
+                            q.push(onedif);
+                        }
+                    }
+                }
+            }
+        }
+        if(found){
+            break;
+        }
+    }
+    if(found){
+        dfs(ref, endWord, beginWord, res, []);
+    }
+    return res;
+};
+var dfs = function(ref, end, start, res, one){
+    if(end === start){
+        one.unshift(start);
+        res.push(one.concat());
+        one.shift();
+        return;
+    }
+    var neg = ref.get(end);
+    one.unshift(end);
+    for(var i = 0; i < neg.length; i++){
+
+        dfs(ref, neg[i], start, res, one);
+
+    }
+    one.shift();
+    return;
+};
+
